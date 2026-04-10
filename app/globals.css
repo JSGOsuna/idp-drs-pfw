@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+
+/* Custom scrollbar for product list */
+.custom-scrollbar {
+	scrollbar-width: thin; /* Firefox */
+	scrollbar-color: #f59e0b #e5e7eb; /* thumb color, track color */
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+	width: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+	background: #e5e7eb; /* gray-200 */
+	border-radius: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+	background: #f59e0b; /* amber-500 */
+	border-radius: 8px;
+	border: 2px solid #e5e7eb; /* creates padding effect */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+	background: #d97706; /* amber-600 */
+}
+
+

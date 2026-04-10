@@ -22,10 +22,17 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
 
-    - name: Build
-      run: |
-        npm install
-        npm run dev
-        
+    - name: Instalar dependencias
+      run: npm install
+
+    - name: Build de la app
+      run: npm run build
+
+    - name: Levantar servidor
+      run: npm run start &
+
+    - name: Esperar a que esté listo
+      run: npx wait-on http://localhost:3000
+
 
 

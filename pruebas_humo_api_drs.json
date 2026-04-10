@@ -1,0 +1,90 @@
+{
+  "info": {
+    "_postman_id": "1985a21d-d6f2-4742-bb8d-018f2861d297",
+    "name": "Pruebas de Humo - Disco Rayado",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "52889629",
+    "_collection_link": "https://go.postman.co/collection/52889629-1985a21d-d6f2-4742-bb8d-018f2861d297?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "New Request",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "\r",
+              "pm.test(\"Verificar que el tiempo de respuesta sea menor a 1000ms\", function () {\r",
+              "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Verificar que el body no esté vacío\", function(){\r",
+              "    pm.expect(pm.response.text()).to.not.be.empty;\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Verificar Content-Type\", function(){\r",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"text/html\");\r",
+              "});\r",
+              "\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "New Request",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Verificar que cargue mi pedido\", function(){\r",
+              "    pm.expect(pm.response.text()).contains(\"Mi Pedido\");\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/order",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "order"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

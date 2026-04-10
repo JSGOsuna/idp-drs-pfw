@@ -38,5 +38,5 @@ jobs:
       run: npm install -g newman
 
     - name: Ejecutar pruebas de humo
-      run: newman run pruebas_humo_drs.json
+      run: newman run pruebas_humo_api_drs.json
 

@@ -34,5 +34,9 @@ jobs:
     - name: Esperar a que esté listo
       run: npx wait-on http://localhost:3000
 
+    - name: Instalar Newman
+      run: npm install -g newman
 
+    - name: Ejecutar pruebas de humo
+      run: newman run pruebas_humo_api.json
 

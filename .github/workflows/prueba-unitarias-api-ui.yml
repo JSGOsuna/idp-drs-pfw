@@ -16,7 +16,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-
+#descargar node
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
@@ -24,7 +24,7 @@ jobs:
 
     - name: Instalar dependencias
       run: npm install
-
+#correr la pagina
     - name: Build de la app
       run: npm run build
 
@@ -34,9 +34,11 @@ jobs:
     - name: Esperar a que esté listo
       run: npx wait-on http://localhost:3000
 
+#pruebas de humo API
     - name: Instalar Newman
       run: npm install -g newman
 
     - name: Ejecutar pruebas de humo
       run: newman run pruebas_humo_api_drs.json
 
+#pruebas playwright con pytest

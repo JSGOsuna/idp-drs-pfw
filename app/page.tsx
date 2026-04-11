@@ -81,6 +81,7 @@ export default function Home() {
             <h2 className="text-2xl font-bold text-amber-950 mb-3">Iniciar</h2>
 
             <button
+              id="btnLoginInicio"
               onClick={() => { setShowLogin(true); setError(""); }}
               className="relative w-36 h-36 rounded-full flex items-center justify-center bg-black shadow-2xl transform hover:scale-105 transition"
               aria-label="Abrir login"
@@ -121,6 +122,7 @@ export default function Home() {
                 <div>
                   <label className="block text-sm text-slate-700">Usuario</label>
                   <input
+                    id="campoUsuario"
                     type="text"
                     value={usuario}
                     onChange={(e) => setUsuario(e.target.value)}
@@ -132,6 +134,7 @@ export default function Home() {
                 <div>
                   <label className="block text-sm text-slate-700">Contraseña</label>
                   <input
+                    id="campoPassword"
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -142,8 +145,8 @@ export default function Home() {
 
 
                 <div className="flex gap-3 pt-2">
-                  <button type="button" onClick={() => setShowLogin(false)} className="flex-1 py-2 rounded-lg border border-slate-200">Cancelar</button>
-                  <button type="submit" className="flex-1 py-2 rounded-lg bg-amber-500 text-white">Entrar</button>
+                  <button id="btnCancelarLogin" type="button" onClick={() => setShowLogin(false)} className="flex-1 py-2 rounded-lg border border-slate-200">Cancelar</button>
+                  <button id="btnEntrarLogin" type="submit" className="flex-1 py-2 rounded-lg bg-amber-500 text-white">Entrar</button>
                 </div>
               </form>
 

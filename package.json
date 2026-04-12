@@ -6,7 +6,11 @@
     "dev": "next dev --webpack",
     "build": "next build --webpack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test:unit": "vitest",
+    "test:ui": "py -m pytest test_login_drs_ui.py",
+    "test:all": "npm run test:unit && npm run test:ui",
+    "test": "vitest"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",

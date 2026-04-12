@@ -24,6 +24,15 @@ jobs:
 
     - name: Instalar dependencias
       run: npm install
+
+    - name: Instalar dependencia para reporte HTML de Vitest
+      run: npm install --no-save @vitest/coverage-v8
+
+#pruebas unitarias vitest
+    - name: Ejecutar pruebas unitarias con Vitest y generar HTML
+      run: |
+        mkdir -p reportes/vitest
+        npx vitest run --coverage.enabled true --coverage.provider=v8 --coverage.reporter=html --coverage.reportsDirectory=reportes/vitest
 #correr la pagina
     - name: Build de la app
       run: npm run build
@@ -33,7 +42,8 @@ jobs:
 
     - name: Esperar a que esté listo
       run: npx wait-on http://localhost:3000
-
+#pruebas unitarias
+    
 #pruebas de humo API
     - name: Instalar Newman
       run: npm install -g newman
@@ -66,4 +76,12 @@ jobs:
       with:
         name: reporte-pytest-playwright
         path: reportes/pytest-playwright-report.html
+        if-no-files-found: warn
+
+    - name: Publicar reporte HTML de Vitest
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: reporte-vitest-html
+        path: reportes/vitest
         if-no-files-found: warn

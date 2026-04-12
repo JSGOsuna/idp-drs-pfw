@@ -42,21 +42,28 @@ jobs:
       run: newman run pruebas_humo_api_drs.json
 
 #pruebas playwright con pytest
-    - name: Instalar Python
-      uses: actions/setup-python@v4
+    - name: Configurar Python
+      uses: actions/setup-python@v5
       with:
-        python-version: '3.x'
+        python-version: "3.12"
 
-    - name: Instalar dependencias de Python
+    - name: Instalar dependencias de pruebas UI
       run: |
-          python install pytest-playwright pytest-html
-          playwright install
+        python -m pip install --upgrade pip
+        pip install pytest pytest-playwright pytest-html playwright
 
-    - name: Ejecutar pruebas de Playwright
-      run: pytest --html=reporte_pruebas.html --self-contained-html 
-    
-    - name: Subir reporte Playwright
+    - name: Instalar navegadores de Playwright
+      run: python -m playwright install --with-deps chromium
+
+    - name: Ejecutar pruebas UI con pytest
+      run: |
+        mkdir -p reportes
+        pytest test_login_drs_ui.py --html=reportes/pytest-playwright-report.html --self-contained-html
+
+    - name: Publicar reporte HTML
+      if: always()
       uses: actions/upload-artifact@v4
       with:
-        name: reporte-pruebas-playwright
-        path: reporte_pruebas.html
+        name: reporte-pytest-playwright
+        path: reportes/pytest-playwright-report.html
+        if-no-files-found: warn

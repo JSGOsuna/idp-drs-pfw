@@ -42,3 +42,21 @@ jobs:
       run: newman run pruebas_humo_api_drs.json
 
 #pruebas playwright con pytest
+    - name: Instalar Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+
+    - name: Instalar dependencias de Python
+      run: |
+          python install pytest-playwright pytest-html
+          playwright install
+
+    - name: Ejecutar pruebas de Playwright
+      run: pytest --html=reporte_pruebas.html --self-contained-html 
+    
+    - name: Subir reporte Playwright
+      uses: actions/upload-artifact@v3
+      with:
+        name: reporte-pruebas-playwright
+        path: reporte_pruebas.html

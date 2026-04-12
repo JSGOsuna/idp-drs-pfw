@@ -46,10 +46,20 @@ jobs:
     
 #pruebas de humo API
     - name: Instalar Newman
-      run: npm install -g newman
+      run: npm install -g newman newman-reporter-htmlextra
 
     - name: Ejecutar pruebas de humo
-      run: newman run pruebas_humo_api_drs.json
+      run: |
+        mkdir -p reportes
+        newman run pruebas_humo_api_drs.json -r cli,htmlextra --reporter-htmlextra-export reportes/newman-api-smoke-report.html
+
+    - name: Publicar reporte HTML de humo API
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: reporte-newman-api-html
+        path: reportes/newman-api-smoke-report.html
+        if-no-files-found: warn
 
 #pruebas playwright con pytest
     - name: Configurar Python

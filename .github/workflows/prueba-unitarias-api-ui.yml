@@ -2,9 +2,9 @@ name: NodeJS with Webpack
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   build:
@@ -15,83 +15,94 @@ jobs:
         node-version: [24.x]
 
     steps:
-    - uses: actions/checkout@v4
-#descargar node
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
+      # Checkout del código
+      - uses: actions/checkout@v4
 
-    - name: Instalar dependencias
-      run: npm install
+      # Configurar Node.js
+      - name: Usar Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
 
-    - name: Instalar dependencia para reporte HTML de Vitest
-      run: npm install --no-save @vitest/coverage-v8
+      # Instalar dependencias
+      - name: Instalar dependencias
+        run: npm install
 
-#pruebas unitarias vitest
-    - name: Ejecutar pruebas unitarias con Vitest y generar HTML
-      run: |
-        mkdir -p reportes/vitest
-        npx vitest run --coverage.enabled true --coverage.provider=v8 --coverage.reporter=html --coverage.reportsDirectory=reportes/vitest
-#correr la pagina
-    - name: Build de la app
-      run: npm run build
+      # =========================
+      # PRUEBAS UNITARIAS (VITEST)
+      # =========================
+      - name: Instalar dependencia para reporte HTML de Vitest
+        run: npm install --no-save @vitest/coverage-v8
 
-    - name: Levantar servidor
-      run: npm run start &
+      - name: Ejecutar pruebas unitarias con Vitest
+        run: |
+          mkdir -p reportes/vitest
+          npx vitest run --coverage.enabled true --coverage.provider=v8 --coverage.reporter=html --coverage.reportsDirectory=reportes/vitest
 
-    - name: Esperar a que esté listo
-      run: npx wait-on http://localhost:3000
-#pruebas unitarias
-    
-#pruebas de humo API
-    - name: Instalar Newman
-      run: npm install -g newman newman-reporter-htmlextra
+      - name: Publicar reporte HTML de Vitest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reporte-vitest-html
+          path: reportes/vitest
+          if-no-files-found: warn
 
-    - name: Ejecutar pruebas de humo
-      run: |
-        mkdir -p reportes
-        newman run pruebas_humo_api_drs.json -r cli,htmlextra --reporter-htmlextra-export reportes/newman-api-smoke-report.html
+      # =========================
+      # BUILD Y LEVANTAR APP
+      # =========================
+      - name: Build de la app
+        run: npm run build
 
-    - name: Publicar reporte HTML de humo API
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: reporte-newman-api-html
-        path: reportes/newman-api-smoke-report.html
-        if-no-files-found: warn
+      - name: Levantar servidor
+        run: npm run start &
 
-#pruebas playwright con pytest
-    - name: Configurar Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: "3.12"
+      - name: Esperar a que esté listo
+        run: npx wait-on http://localhost:3000
 
-    - name: Instalar dependencias de pruebas UI
-      run: |
-        python -m pip install --upgrade pip
-        pip install pytest pytest-playwright pytest-html playwright
+      # =========================
+      # PRUEBAS API (NEWMAN)
+      # =========================
+      - name: Instalar Newman
+        run: npm install -g newman newman-reporter-htmlextra
 
-    - name: Instalar navegadores de Playwright
-      run: python -m playwright install --with-deps chromium
+      - name: Ejecutar pruebas de humo API
+        run: |
+          mkdir -p reportes
+          newman run pruebas_humo_api_drs.json -r cli,htmlextra --reporter-htmlextra-export reportes/newman-api-smoke-report.html
 
-    - name: Ejecutar pruebas UI con pytest
-      run: |
-        mkdir -p reportes
-        pytest test_login_drs_ui.py --html=reportes/pytest-playwright-report.html --self-contained-html
+      - name: Publicar reporte HTML de API
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reporte-newman-api-html
+          path: reportes/newman-api-smoke-report.html
+          if-no-files-found: warn
 
-    - name: Publicar reporte HTML
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: reporte-pytest-playwright
-        path: reportes/pytest-playwright-report.html
-        if-no-files-found: warn
+      # =========================
+      # PRUEBAS UI (PYTEST + PLAYWRIGHT)
+      # =========================
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
 
-    - name: Publicar reporte HTML de Vitest
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: reporte-vitest-html
-        path: reportes/vitest
-        if-no-files-found: warn
+      - name: Instalar dependencias UI
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest pytest-playwright pytest-html playwright
+
+      - name: Instalar navegadores Playwright
+        run: python -m playwright install --with-deps chromium
+
+      - name: Ejecutar pruebas UI
+        run: |
+          mkdir -p reportes
+          pytest test_login_drs_ui.py --html=reportes/pytest-playwright-report.html --self-contained-html
+
+      - name: Publicar reporte HTML UI
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reporte-pytest-playwright
+          path: reportes/pytest-playwright-report.html
+          if-no-files-found: warn
